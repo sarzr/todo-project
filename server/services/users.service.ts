@@ -22,6 +22,8 @@ type signupUserType = (_: FormData, token: string) => Promise<boolean>;
 export const signupUser: signupUserType = async (data, token) => {
   try {
     const newUser = await pb.collection("users").create(data);
+    console.log(newUser);
+
     const expiration = moment().add(30, "minutes").unix();
 
     await pb
@@ -45,20 +47,29 @@ export const loginUser: loginUserType = async (userId, token) => {
   }
 };
 
-type authorizationType = (token: string) => Promise<boolean>;
+type authorizationType = (token: string) => Promise<string | boolean>;
 export const authorization: authorizationType = async (token) => {
   try {
     const session: ISession = await pb
       .collection("sessions")
       .getFirstListItem(`token="${token}"`);
     if (!session) return false;
+
     const user = await pb
       .collection("users")
       .getFirstListItem(`id="${session.userId}"`);
     if (!user) return false;
+
     const valid = moment(session.expiration * 1000).isAfter(moment());
-    if (!valid) await pb.collection("sessions").delete(session.id);
-    return valid;
+
+    if (!valid) {
+      await pb.collection("sessions").delete(session.id);
+      return false;
+    }
+
+    console.log(session.userId);
+
+    return session.userId;
   } catch {
     return false;
   }

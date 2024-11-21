@@ -1,9 +1,11 @@
 import { pb } from "../database/connection";
 
-// get todos list
-type todosListType = () => Promise<IPocketBaseTodoList>;
-export const todosList: todosListType = async () => {
-  return await pb.collection("todos").getList();
+// get todos list for each users
+type todosListType = (userId: string) => Promise<IPocketBaseTodoList>;
+export const todosList: todosListType = async (userId) => {
+  return await pb.collection("todos").getList(1, 50, {
+    filter: `userId="${userId}"`,
+  });
 };
 
 // get todo by id
@@ -39,7 +41,7 @@ export const updateTodo: updateTodoType = async (id, data) => {
 };
 
 // completed patch
-type patchTodoType = (_id: string, _: boolean) => Promise<boolean>;
+type patchTodoType = (_1: string, _2: boolean) => Promise<boolean>;
 export const patchTodo: patchTodoType = async (id, completed) => {
   try {
     await pb.collection("todos").update(id, { completed });

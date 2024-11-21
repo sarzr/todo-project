@@ -11,6 +11,8 @@ import {
 } from "@/server/validations/todo.validation";
 import { NextResponse } from "next/server";
 
+export const dynamic = "force-dynamic";
+
 // update body
 export const PUT = async (
   req: Request,
@@ -28,14 +30,10 @@ export const PUT = async (
     );
   }
 
-  const body = await req.formData();
+  const body = await req.json();
 
-  const updatevalidationResult = updateTodoSchema.safeParse({
-    title: body.get("title")?.toString() || "",
-    description: body.get("description")?.toString() || "",
-    priorities: body.get("priorities")?.toString(),
-    completed: body.get("completed"),
-  });
+  const updatevalidationResult = updateTodoSchema.safeParse(body);
+
   if (!updatevalidationResult.success) {
     return NextResponse.json(
       {
@@ -87,19 +85,18 @@ export const PATCH = async (
 
   const body = await req.json();
 
+  console.log(body);
+
   if (!patchTodoSchema.safeParse(body).success) {
     return NextResponse.json(
       {
         error: "Invalid body",
       },
-      { status: 404 }
+      { status: 400 }
     );
   }
   const id = (await params).id;
   const todo = await todoById(id);
-
-  console.log(id);
-  console.log(todo);
 
   if (!todo) {
     return NextResponse.json(
@@ -110,7 +107,7 @@ export const PATCH = async (
     );
   }
 
-  if (!(await patchTodo(id, body.completed === "true"))) {
+  if (!(await patchTodo(id, JSON.parse(body.completed)))) {
     return NextResponse.json(
       {
         error: "Something went wrong",

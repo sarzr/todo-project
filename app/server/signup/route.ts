@@ -1,16 +1,15 @@
-import {
-  signupUser,
-} from "@/server/services/users.service";
+import { signupUser } from "@/server/services/users.service";
 import { authSchema } from "@/server/validations/auth.validation";
 import { NextResponse } from "next/server";
 
-export const POST = async (req: Request) => {
-  const body = await req.formData();
+export const dynamic = "force-dynamic";
 
-  const validationResult = authSchema.safeParse({
-    username: body.get("username")?.toString() || "",
-    password: body.get("password")?.toString() || "",
-  });
+export const POST = async (req: Request) => {
+  const body = await req.json();
+
+  console.log(body);
+
+  const validationResult = authSchema.safeParse(body);
 
   if (!validationResult.success) {
     return NextResponse.json(

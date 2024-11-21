@@ -1,14 +1,11 @@
-import HomeLayout from "@/components/home-layout";
+import HomeLayout from "@/components/home/home-layout";
 import Image from "next/image";
 import { RiShareBoxLine } from "react-icons/ri";
 
 export default function Home() {
   return (
     <HomeLayout>
-      <div
-        className="bg-purpleHome text-white"
-        style={{ minHeight: "calc(100vh - 9.92rem)" }}
-      >
+      <div className="bg-purpleHome text-white min-h-home sm:min-h-smHome">
         <div className="max-w-[1200px] mx-auto flex flex-col sm:flex-row justify-between lg:gap-40">
           <div className="pt-5 sm:pt-20 space-y-5 sm:space-y-9 mx-5">
             <h1 className="font-medium text-2xl sm:font-extrabold sm:text-4xl">
@@ -27,10 +24,13 @@ export default function Home() {
               <RiShareBoxLine className="w-5 h-5 font-extrabold" />
             </button>
           </div>
-          <img
+          <Image
             src="/02444.png"
             alt="todo-list-image"
             className="sm:mr-10 mx-auto w-72 h-72 my-5 md:w-[400px] md:h-[400px]"
+            width={500}
+            height={500}
+
           />
         </div>
       </div>

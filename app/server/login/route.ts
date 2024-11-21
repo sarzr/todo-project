@@ -5,6 +5,8 @@ import {
 import { authSchema } from "@/server/validations/auth.validation";
 import { NextResponse } from "next/server";
 
+export const dynamic = "force-dynamic";
+
 export const POST = async (req: Request) => {
   let body;
   try {
@@ -33,7 +35,6 @@ export const POST = async (req: Request) => {
   }
 
   const user = await getUsersByCredentials(body.username, body.password);
-  console.log(body.username, body.password);
 
   if (!user) {
     return NextResponse.json(
